@@ -4,7 +4,6 @@ import com.github.mgrzeszczak.jsondsl.Json.Companion.obj
 import com.google.gson.Gson
 import net.kyori.adventure.key.Key
 import net.mcbrawls.auxil.provider.ResourceProvider
-import net.mcbrawls.auxil.resource.PackResource
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.zip.ZipEntry
@@ -12,41 +11,18 @@ import java.util.zip.ZipOutputStream
 
 class ResourcePackGenerator(
     val meta: ResourcePack.Meta,
-    sources: Set<File>,
+    val sourceFiles: Set<File>,
 ) {
-    private val resources: MutableMap<Key, PackResource> = mutableMapOf()
-
-    private val sources: Map<Key, ByteArray> = buildMap {
-        sources.forEach { folderRoot ->
-            folderRoot.walkTopDown()
-                .filter { it.isFile }
-                .forEach { file ->
-                    val filePath = file.relativeTo(folderRoot).path
-                    val namespace = filePath.substringBefore(File.separator)
-                    val path = filePath
-                        .substringAfter(namespace)
-                        .removePrefix(File.separator)
-                        .split(File.separator)
-                        .joinToString("/")
-                    val key = Key.key(namespace, path)
-
-                    this[key] = file.readBytes()
-                }
-        }
-    }
-
-    fun add(key: Key, resource: PackResource): ResourcePackGenerator {
-        resources[key] = resource
-        return this
-    }
+    private val providers: MutableSet<ResourceProvider> = mutableSetOf()
 
     fun add(provider: ResourceProvider): ResourcePackGenerator {
-        val resources = provider.collectFiles(sources)
-        resources.forEach(::add)
+        providers.add(provider)
         return this
     }
 
-    fun generate(): ResourcePack {
+    fun generate(sources: Map<Key, ByteArray> = generateSources()): ResourcePack {
+        val resources = providers.flatMap { it.collectFiles(sources).entries }.associate { it.key to it.value }
+
         val files = buildMap {
             this["pack.mcmeta"] = generateMetaBytes()
             meta.logo?.let { logo -> this["pack.png"] = logo.readBytes() }
@@ -61,6 +37,8 @@ class ResourcePackGenerator(
         val packBytes = createZip(files)
         return ResourcePack(packBytes)
     }
+
+    fun generateSources(): Map<Key, ByteArray> = Auxil.generateSources(sourceFiles).mapValues { it.value.invoke() }
 
     private fun generateMetaBytes(): ByteArray {
         val format = meta.format
