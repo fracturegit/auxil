@@ -13,7 +13,8 @@ data class TextSprite(
     val unicodeValue: Int get() = 0xE000 + index.invoke(this)
     val unicodeChar: Char get() = unicodeValue.toChar()
 
-    val metadata: Metadata by lazy(::createMetadata)
+    lateinit var metadata: Metadata
+        private set
 
     fun createMetadata(): Metadata {
         val key = TextSpriteProvider.createKey(key, "png", "textures/sprites/")
@@ -23,6 +24,10 @@ data class TextSprite(
             trueHeight = FilePropertyGetter.getImageHeight(bytes) ?: error("Could not get image height: $key"),
             trueWidth = FilePropertyGetter.getWhitespaceRemovedWidth(bytes),
         )
+    }
+
+    fun reloadMetadata() {
+        metadata = createMetadata()
     }
 
     inner class Metadata(
