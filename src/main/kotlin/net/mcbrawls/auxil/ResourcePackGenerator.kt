@@ -15,8 +15,8 @@ class ResourcePackGenerator(
 ) {
     private val providers: MutableSet<ResourceProvider> = mutableSetOf()
 
-    fun add(provider: ResourceProvider): ResourcePackGenerator {
-        providers.add(provider)
+    fun add(vararg providers: ResourceProvider): ResourcePackGenerator {
+        this.providers.addAll(providers)
         return this
     }
 
