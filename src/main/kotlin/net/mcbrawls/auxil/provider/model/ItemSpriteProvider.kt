@@ -7,12 +7,15 @@ import net.mcbrawls.api.registry.BasicRegistry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
 
-class ItemSpriteProvider(val models: Set<Key>) : ResourceProvider {
+class ItemSpriteProvider(val sprites: Set<ItemSprite>) : ResourceProvider {
     override fun collectFiles(sources: Map<Key, ByteArray>): Map<Key, PackResource> {
         return buildMap {
-            val spriteKeys = models.map { Key.key(it.namespace(), "sprites/${it.value()}") }
+            val spriteKeys = mutableSetOf<Key>()
 
-            spriteKeys.forEach { key ->
+            sprites.forEach { sprite ->
+                val key = sprite.fullKey
+                spriteKeys.add(key)
+
                 val textureKey = createKey(key, "png", "textures/")
                 this[textureKey] = PackResource.Direct(textureKey)
 
@@ -39,6 +42,14 @@ class ItemSpriteProvider(val models: Set<Key>) : ResourceProvider {
                         "textures" to obj {
                             "layer0" to key
                         }
+
+                        sprite.scale?.let { (x, y, z) ->
+                            "display" to obj {
+                                "gui" to obj {
+                                    "scale" to array(x, y, z)
+                                }
+                            }
+                        }
                     }
                 )
             }
@@ -59,25 +70,25 @@ class ItemSpriteProvider(val models: Set<Key>) : ResourceProvider {
     }
 
     class Builder {
-        private val models: MutableSet<Key> = mutableSetOf()
+        private val sprites: MutableSet<ItemSprite> = mutableSetOf()
 
-        fun add(vararg models: Key): Builder {
-            this.models.addAll(models)
+        fun add(vararg sprites: ItemSprite): Builder {
+            this.sprites.addAll(sprites)
             return this
         }
 
-        fun add(models: Collection<Key>): Builder {
-            this.models.addAll(models)
+        fun add(models: Collection<ItemSprite>): Builder {
+            this.sprites.addAll(models)
             return this
         }
 
-        fun add(registry: BasicRegistry<Key>): Builder {
+        fun add(registry: BasicRegistry<ItemSprite>): Builder {
             registry.collectEntries().forEach(::add)
             return this
         }
 
         fun build(): ItemSpriteProvider {
-            return ItemSpriteProvider(models)
+            return ItemSpriteProvider(sprites)
         }
     }
 
