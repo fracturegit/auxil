@@ -6,7 +6,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import net.kyori.adventure.key.Key
-import net.mcbrawls.api.registry.BasicRegistry
+import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
 
@@ -83,7 +83,7 @@ class ModelProvider(val models: Set<Key>) : ResourceProvider {
             return this
         }
 
-        fun add(registry: BasicRegistry<Key>): Builder {
+        fun add(registry: Registry<Key>): Builder {
             registry.collectEntries().forEach(::add)
             return this
         }

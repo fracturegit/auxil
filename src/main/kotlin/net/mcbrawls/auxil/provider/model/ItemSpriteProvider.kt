@@ -3,7 +3,7 @@ package net.mcbrawls.auxil.provider.model
 import com.github.mgrzeszczak.jsondsl.Json.Companion.obj
 import com.google.gson.Gson
 import net.kyori.adventure.key.Key
-import net.mcbrawls.api.registry.BasicRegistry
+import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
 
@@ -82,7 +82,7 @@ class ItemSpriteProvider(val sprites: Set<ItemSprite>) : ResourceProvider {
             return this
         }
 
-        fun add(registry: BasicRegistry<ItemSprite>): Builder {
+        fun add(registry: Registry<ItemSprite>): Builder {
             registry.collectEntries().forEach(::add)
             return this
         }

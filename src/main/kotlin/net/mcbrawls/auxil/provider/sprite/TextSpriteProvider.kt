@@ -2,7 +2,7 @@ package net.mcbrawls.auxil.provider.sprite
 
 import com.github.mgrzeszczak.jsondsl.Json.Companion.obj
 import net.kyori.adventure.key.Key
-import net.mcbrawls.api.registry.BasicRegistry
+import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.FilePropertyGetter
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.provider.font.FontProvider
@@ -61,7 +61,7 @@ class TextSpriteProvider(val sprites: Set<TextSprite>, val font: Key) : Resource
             return this
         }
 
-        fun add(registry: BasicRegistry<TextSprite>): Builder {
+        fun add(registry: Registry<TextSprite>): Builder {
             registry.collectEntries().forEach(::add)
             return this
         }
