@@ -14,17 +14,19 @@ class FontMetrics(
     val fontBytes: ByteArray = file.readBytes()
     val font: Font = Font.createFont(format, fontBytes.inputStream()).deriveFont(size)
 
+    private val boundsCache: MutableMap<Char, Rectangle2D> = mutableMapOf()
+
     /**
      * Returns the bounds of the provided text for this font.
      */
     fun getBounds(string: String): List<Pair<Char, Rectangle2D?>> {
         return string.map { char ->
             char to if (font.canDisplay(char)) {
-                font.getStringBounds(char.toString(), FONT_RENDER_CONTEXT)
+                boundsCache.computeIfAbsent(char) { font.getStringBounds(it.toString(), FONT_RENDER_CONTEXT) }
             } else {
                 null
             }
-        } // TODO cache
+        }
     }
 
     companion object {
