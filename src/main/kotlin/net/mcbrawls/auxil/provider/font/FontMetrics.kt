@@ -5,6 +5,7 @@ import java.awt.font.FontRenderContext
 import java.awt.geom.AffineTransform
 import java.awt.geom.Rectangle2D
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 class FontMetrics(
     file: File,
@@ -14,7 +15,7 @@ class FontMetrics(
     val fontBytes: ByteArray = file.readBytes()
     val font: Font = Font.createFont(format, fontBytes.inputStream()).deriveFont(size)
 
-    private val boundsCache: MutableMap<Char, Rectangle2D> = mutableMapOf()
+    private val boundsCache: MutableMap<Char, Rectangle2D> = ConcurrentHashMap()
 
     /**
      * Returns the bounds of the provided text for this font.
