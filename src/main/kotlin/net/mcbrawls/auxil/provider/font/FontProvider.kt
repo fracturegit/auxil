@@ -5,7 +5,6 @@ import net.kyori.adventure.key.Key
 import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
-import kotlin.math.min
 
 class FontProvider(val fonts: Map<String, Font>) : ResourceProvider {
     override fun collectFiles(sources: Map<Key, ByteArray>): Map<Key, PackResource> {
@@ -26,20 +25,6 @@ class FontProvider(val fonts: Map<String, Font>) : ResourceProvider {
 
                                 font.shift?.let { shift ->
                                     "shift" to array(shift.x, shift.y)
-                                }
-                            },
-
-                            obj {
-                                "type" to "bitmap"
-                                "file" to "fracture:font/bullet.png"
-                                "chars" to array("⏺")
-                                "height" to 5
-
-                                val shift = font.shift
-                                if (shift != null) {
-                                    "ascent" to min(5 - shift.y.toInt(), 5)
-                                } else {
-                                    "ascent" to 5
                                 }
                             },
 
