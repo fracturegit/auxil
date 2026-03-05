@@ -22,11 +22,13 @@ object AuxilTest {
                 .build()
         )
 
+        val fontId = Key.key("test", "pinch")
         generator.add(
             FontProvider.builder()
                 .add(
+                    fontId,
                     Font(
-                        Key.key("test", "pinch"),
+                        fontId,
                         7.0,
                         4.0
                     )

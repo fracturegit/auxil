@@ -7,11 +7,11 @@ import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
 import kotlin.math.min
 
-class FontProvider(val fonts: Set<Font>) : ResourceProvider {
+class FontProvider(val fonts: Map<String, Font>) : ResourceProvider {
     override fun collectFiles(sources: Map<Key, ByteArray>): Map<Key, PackResource> {
         return buildMap {
-            fonts.forEach { font ->
-                val jsonFile = createKey(font, "json", Font::fullKey)
+            fonts.forEach { (fontId, font) ->
+                val jsonFile = createKey(font, "json") { Key.key(fontId) }
                 val ttfFile = createKey(font, "ttf", Font::key)
 
                 this[jsonFile] = PackResource.RawJson(
@@ -25,7 +25,7 @@ class FontProvider(val fonts: Set<Font>) : ResourceProvider {
                                 "oversample" to font.oversample
 
                                 font.shift?.let { shift ->
-                                    "shift" to array(shift.first, shift.second)
+                                    "shift" to array(shift.x, shift.y)
                                 }
                             },
 
@@ -37,7 +37,7 @@ class FontProvider(val fonts: Set<Font>) : ResourceProvider {
 
                                 val shift = font.shift
                                 if (shift != null) {
-                                    "ascent" to min(5 - shift.second.toInt(), 5)
+                                    "ascent" to min(5 - shift.y.toInt(), 5)
                                 } else {
                                     "ascent" to 5
                                 }
@@ -57,20 +57,19 @@ class FontProvider(val fonts: Set<Font>) : ResourceProvider {
     }
 
     class Builder {
-        private val fonts: MutableSet<Font> = mutableSetOf()
+        private val fonts: MutableMap<String, Font> = mutableMapOf()
 
-        fun add(vararg fonts: Font): Builder {
-            this.fonts.addAll(fonts)
+        fun add(key: String, font: Font): Builder {
+            fonts[key] = font
             return this
         }
 
-        fun add(fonts: Collection<Font>): Builder {
-            this.fonts.addAll(fonts)
-            return this
+        fun add(key: Key, font: Font): Builder {
+            return add(key.toString(), font)
         }
 
         fun add(registry: Registry<Font>): Builder {
-            registry.collectEntries().forEach(::add)
+            registry.forEachEntry(::add)
             return this
         }
 
