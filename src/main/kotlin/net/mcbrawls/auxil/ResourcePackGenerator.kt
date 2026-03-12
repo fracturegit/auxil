@@ -3,11 +3,9 @@ package net.mcbrawls.auxil
 import com.github.mgrzeszczak.jsondsl.Json.Companion.obj
 import com.google.gson.Gson
 import net.kyori.adventure.key.Key
+import net.mcbrawls.auxil.obfuscation.ObfuscatedZip
 import net.mcbrawls.auxil.provider.ResourceProvider
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 class ResourcePackGenerator(
     val meta: ResourcePack.Meta,
@@ -34,7 +32,7 @@ class ResourcePackGenerator(
             }
         }
 
-        val packBytes = createZip(files)
+        val packBytes = ObfuscatedZip.fromMap(files)
         return ResourcePack(packBytes)
     }
 
@@ -92,12 +90,12 @@ class ResourcePackGenerator(
 
         fun builder(): Builder {
             return Builder()
-        }
+        }/*
 
-        /**
+        *//**
          * Creates a zip file from a map of paths to their file byte arrays.
          * @return a zip byte array
-         */
+         *//*
         fun createZip(files: Map<String, ByteArray>): ByteArray {
             val outputStream = ByteArrayOutputStream()
             val zipOutputStream = ZipOutputStream(outputStream)
@@ -113,6 +111,6 @@ class ResourcePackGenerator(
             }
 
             return outputStream.toByteArray()
-        }
+        }*/
     }
 }
