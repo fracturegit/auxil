@@ -90,27 +90,6 @@ class ResourcePackGenerator(
 
         fun builder(): Builder {
             return Builder()
-        }/*
-
-        *//**
-         * Creates a zip file from a map of paths to their file byte arrays.
-         * @return a zip byte array
-         *//*
-        fun createZip(files: Map<String, ByteArray>): ByteArray {
-            val outputStream = ByteArrayOutputStream()
-            val zipOutputStream = ZipOutputStream(outputStream)
-
-            zipOutputStream.use { stream ->
-                for ((fileName, fileContent) in files) {
-                    val entry = ZipEntry(fileName)
-                    entry.time = 0
-                    stream.putNextEntry(entry)
-                    stream.write(fileContent)
-                    stream.closeEntry()
-                }
-            }
-
-            return outputStream.toByteArray()
-        }*/
+        }
     }
 }

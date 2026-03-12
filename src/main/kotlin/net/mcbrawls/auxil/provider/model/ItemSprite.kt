@@ -3,8 +3,10 @@ package net.mcbrawls.auxil.provider.model
 import net.kyori.adventure.key.Key
 
 data class ItemSprite(
-    val key: Key,
-    val scale: Triple<Double, Double, Double>? = null,
+    val textureKey: Key,
+    val scale: Scale? = null,
 ) {
-    val fullKey = Key.key(key.namespace(), "sprites/${key.value()}")
+    data class Scale(val x: Double, val y: Double, val z: Double) {
+        constructor(scale: Double) : this(scale, scale, scale)
+    }
 }
