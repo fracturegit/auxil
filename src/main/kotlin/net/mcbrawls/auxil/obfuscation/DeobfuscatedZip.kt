@@ -53,7 +53,7 @@ object DeobfuscatedZip {
             }
         }
 
-        error("EOCD signature not found — not a valid ZIP")
+        error("EOCD signature not found - not a valid ZIP")
     }
 
     /* cd */
