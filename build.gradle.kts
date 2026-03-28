@@ -19,7 +19,7 @@ repositories {
 dependencies {
     api("net.kyori:adventure-key:4.25.0")
     api("net.mcbrawls.api:core:1.2.0")
-    api("net.mcbrawls:codex:2.0.0")
+    api("net.mcbrawls:codex:2.0.1")
     api("net.jthink:jaudiotagger:3.0.1")
     api("com.github.mgrzeszczak:json-dsl:v1.1")
 }
