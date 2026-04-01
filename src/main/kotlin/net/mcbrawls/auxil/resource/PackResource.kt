@@ -3,9 +3,11 @@ package net.mcbrawls.auxil.resource
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import net.kyori.adventure.key.Key
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 interface PackResource {
-    fun createBytes(sources: Map<Key, ByteArray>): ByteArray
+    fun createBytes(sources: Map<Key, ByteArray>): ByteArray?
 
     class Raw(val byteArray: ByteArray) : PackResource {
         override fun createBytes(sources: Map<Key, ByteArray>): ByteArray {
@@ -25,8 +27,16 @@ interface PackResource {
     }
 
     class Direct(val key: Key, val fallback: PackResource? = null): PackResource {
-        override fun createBytes(sources: Map<Key, ByteArray>): ByteArray {
-            return sources[key] ?: fallback?.createBytes(sources) ?: error("No source for key: $key")
+        override fun createBytes(sources: Map<Key, ByteArray>): ByteArray? {
+            val bytes = sources[key] ?: fallback?.createBytes(sources)
+            if (bytes == null) {
+                logger.error("No source for key: $key")
+            }
+            return bytes
         }
+    }
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(PackResource::class.java)
     }
 }

@@ -28,7 +28,9 @@ class ResourcePackGenerator(
             resources.forEach { (key, resource) ->
                 val namespace = key.namespace()
                 val path = key.value()
-                this["assets/$namespace/$path"] = resource.createBytes(sources)
+                resource.createBytes(sources)?.let { bytes ->
+                    this["assets/$namespace/$path"] = bytes
+                }
             }
         }
 
