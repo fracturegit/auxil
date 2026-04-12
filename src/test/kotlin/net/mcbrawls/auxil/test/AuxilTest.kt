@@ -16,14 +16,14 @@ object AuxilTest {
             .source(resource("source") ?: error("No source folder found"))
             .build()
 
-        generator.add(
+        generator.add({
             SoundProvider.builder()
                 .addKeys(Key.key("test", "one/thingy"))
                 .build()
-        )
+        })
 
         val fontId = Key.key("test", "pinch")
-        generator.add(
+        generator.add({
             FontProvider.builder()
                 .add(
                     fontId,
@@ -34,7 +34,7 @@ object AuxilTest {
                     )
                 )
                 .build()
-        )
+        })
 
         File("out.zip").writeBytes(generator.generate().bytes)
     }

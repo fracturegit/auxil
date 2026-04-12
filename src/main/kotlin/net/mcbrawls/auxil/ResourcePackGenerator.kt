@@ -11,15 +11,15 @@ class ResourcePackGenerator(
     val meta: ResourcePack.Meta,
     val sourceFiles: Set<File>,
 ) {
-    private val providers: MutableSet<ResourceProvider> = mutableSetOf()
+    private val providers: MutableSet<() -> ResourceProvider> = mutableSetOf()
 
-    fun add(vararg providers: ResourceProvider): ResourcePackGenerator {
+    fun add(vararg providers: () -> ResourceProvider): ResourcePackGenerator {
         this.providers.addAll(providers)
         return this
     }
 
     fun generate(sources: Map<Key, ByteArray> = generateSources()): ResourcePack {
-        val resources = providers.flatMap { it.collectFiles(sources).entries }.associate { it.key to it.value }
+        val resources = providers.map { it() }.flatMap { it.collectFiles(sources).entries }.associate { it.key to it.value }
 
         val files = buildMap {
             this["pack.mcmeta"] = generateMetaBytes()
