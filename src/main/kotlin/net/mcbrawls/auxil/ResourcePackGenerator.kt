@@ -22,6 +22,11 @@ class ResourcePackGenerator(
         return this
     }
 
+    fun addDirect(vararg providers: ResourceProvider): ResourcePackGenerator {
+        this.providers.addAll(providers.map { provider -> { provider } })
+        return this
+    }
+
     fun generate(sources: Map<Key, ByteArray> = generateSources()): ResourcePack {
         val resources = collectResources(sources)
 
