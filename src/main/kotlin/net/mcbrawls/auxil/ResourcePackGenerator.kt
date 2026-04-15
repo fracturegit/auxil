@@ -2,16 +2,20 @@ package net.mcbrawls.auxil
 
 import com.github.mgrzeszczak.jsondsl.Json.Companion.obj
 import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import net.kyori.adventure.key.Key
 import net.mcbrawls.auxil.obfuscation.ObfuscatedZip
 import net.mcbrawls.auxil.provider.ResourceProvider
+import net.mcbrawls.auxil.resource.PackResource
 import java.io.File
 
 class ResourcePackGenerator(
     val meta: ResourcePack.Meta,
     val sourceFiles: Set<File>,
 ) {
-    private val providers: MutableSet<() -> ResourceProvider> = mutableSetOf()
+    private val providers: MutableList<() -> ResourceProvider> = mutableListOf()
 
     fun add(vararg providers: () -> ResourceProvider): ResourcePackGenerator {
         this.providers.addAll(providers)
@@ -19,7 +23,7 @@ class ResourcePackGenerator(
     }
 
     fun generate(sources: Map<Key, ByteArray> = generateSources()): ResourcePack {
-        val resources = providers.map { it() }.flatMap { it.collectFiles(sources).entries }.associate { it.key to it.value }
+        val resources = collectResources(sources)
 
         val files = buildMap {
             this["pack.mcmeta"] = generateMetaBytes()
@@ -36,6 +40,39 @@ class ResourcePackGenerator(
 
         val packBytes = ObfuscatedZip.fromMap(files)
         return ResourcePack(packBytes)
+    }
+
+    fun collectResources(sources: Map<Key, ByteArray>): Map<Key, PackResource> {
+        return buildMap {
+            providers.map { it() }
+                .flatMap { it.collectFiles(sources).entries }
+                .forEach { (key, resource) ->
+                    val existing = this[key]
+                    if (existing is PackResource.RawJson && resource is PackResource.RawJson) {
+                        this[key] = PackResource.RawJson(mergeJsonObjects(existing.json, resource.json))
+                    } else {
+                        this[key] = resource
+                    }
+                }
+        }
+    }
+
+    private fun mergeJsonObjects(a: JsonElement, b: JsonElement): JsonObject {
+        val result = JsonObject()
+        listOf(a, b).filterIsInstance<JsonObject>().forEach { obj ->
+            obj.entrySet().forEach { (k, v) ->
+                val existing = result.get(k)
+                if (existing is JsonArray && v is JsonArray) {
+                    val merged = JsonArray()
+                    existing.forEach { merged.add(it) }
+                    v.forEach { merged.add(it) }
+                    result.add(k, merged)
+                } else {
+                    result.add(k, v)
+                }
+            }
+        }
+        return result
     }
 
     fun generateSources(): Map<Key, ByteArray> = Auxil.generateSources(sourceFiles).mapValues { it.value.invoke() }
