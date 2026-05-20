@@ -20,6 +20,12 @@ class ItemSpriteProvider(val sprites: Map<String, ItemSprite>) : ResourceProvide
                 val pngFileKey = createKey(textureKey, "png", "textures/")
                 this[pngFileKey] = PackResource.Direct(pngFileKey)
 
+                createKey(textureKey, "png.mcmeta", "textures/").let { mcmetaKey ->
+                    if (sources.containsKey(mcmetaKey)) {
+                        this[mcmetaKey] = PackResource.Direct(mcmetaKey)
+                    }
+                }
+
 
                 val itemFile = createKey(jsonKey, "json", "items/")
                 this[itemFile] = PackResource.RawJson(
