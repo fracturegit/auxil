@@ -8,6 +8,7 @@ data class SoundResource(
     val id: Key,
     val sounds: Collection<Key>,
     val stream: Boolean,
+    val subtitle: Key? = null,
 ) {
     companion object {
         fun create(id: Key, builder: Builder.() -> Unit = {

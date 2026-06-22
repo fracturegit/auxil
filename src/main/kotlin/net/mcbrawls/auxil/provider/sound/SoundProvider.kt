@@ -21,10 +21,10 @@ class SoundProvider(
                 // sounds.json
                 this[Key.key(namespace, "sounds.json")] = PackResource.RawJson(
                     obj {
-                        sounds.forEach { (id, sounds) ->
-                            id.value() to obj {
+                        sounds.forEach { resource ->
+                            resource.id.value() to obj {
                                 "sounds" to JsonArray().also { array ->
-                                    sounds.forEach { key ->
+                                    resource.sounds.forEach { key ->
                                         val distance = attenuationDistances[key]
                                         if (distance != null) {
                                             array.add(
@@ -37,6 +37,9 @@ class SoundProvider(
                                             array.add(key.toString())
                                         }
                                     }
+                                }
+                                if (resource.subtitle != null) {
+                                    "subtitle" to resource.subtitle.asString()
                                 }
                             }
                         }

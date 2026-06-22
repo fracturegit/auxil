@@ -22,6 +22,14 @@ dependencies {
     api("net.mcbrawls:codex:2.0.1")
     api("net.jthink:jaudiotagger:3.0.1")
     api("com.github.mgrzeszczak:json-dsl:v1.1")
+
+    testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 kotlin {
