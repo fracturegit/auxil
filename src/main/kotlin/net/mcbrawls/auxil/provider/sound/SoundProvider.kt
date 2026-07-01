@@ -6,6 +6,8 @@ import net.kyori.adventure.key.Key
 import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class SoundProvider(
     sounds: Set<SoundResource>,
@@ -51,6 +53,10 @@ class SoundProvider(
                     resource.sounds.forEach { key ->
                         val fileKey = createSoundFileKey(key)
                         this[fileKey] = PackResource.Direct(fileKey, unimplementedSoundResource)
+
+                        if (!sources.containsKey(fileKey)) {
+                            logger.warn("No sound file found: $fileKey")
+                        }
                     }
                 }
             }
@@ -110,6 +116,8 @@ class SoundProvider(
     }
 
     companion object {
+        private val logger: Logger = LoggerFactory.getLogger(SoundProvider::class.java)
+
         fun builder(): Builder {
             return Builder()
         }
