@@ -5,9 +5,12 @@ import net.kyori.adventure.key.Key
 import net.mcbrawls.api.registry.Registry
 import net.mcbrawls.auxil.provider.ResourceProvider
 import net.mcbrawls.auxil.resource.PackResource
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class FontProvider(val fonts: Map<String, Font>) : ResourceProvider {
     override fun collectFiles(sources: Map<Key, ByteArray>): Map<Key, PackResource> {
+        logger.info("Generating ${fonts.size} fonts")
         return buildMap {
             fonts.forEach { (fontId, font) ->
                 val jsonFile = createKey(font, "json") { Key.key(fontId) }
@@ -64,6 +67,8 @@ class FontProvider(val fonts: Map<String, Font>) : ResourceProvider {
     }
 
     companion object {
+        private val logger: Logger = LoggerFactory.getLogger(FontProvider::class.java)
+
         fun builder(): Builder {
             return Builder()
         }
